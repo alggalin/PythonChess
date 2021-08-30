@@ -12,9 +12,10 @@ WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Python Chess')
 
 
-pieces = pygame.image.load("images/chess-pieces.png")
-pieces = pygame.transform.scale(pieces, (pieces.get_width() // 3, pieces.get_height() // 3))
-imagerect = pieces.get_rect()
+white_king = pygame.image.load("images/WK.png")
+white_king = pygame.transform.scale(white_king, (white_king.get_width() // 3, white_king.get_height() // 3))
+
+imagerect = white_king.get_rect()
 
 def main():
     run = True
@@ -23,7 +24,8 @@ def main():
     # new board object
     board = Board()
 
-    
+    # initial position of the piece
+    mx, my = 50, 50
 
     while(run):
         
@@ -34,12 +36,15 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
         
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pass
+            # move piece while mouse being pressed
+            if pygame.mouse.get_pressed()[0] == True:
+                mx, my = pygame.mouse.get_pos()
+        
         
         # draw the board at the end of each loop
         board.draw_board(WIN)
-        WIN.blit(pieces, imagerect)
+        # WIN.blit(white_king, imagerect)
+        WIN.blit(white_king, (mx - 50, my - 50))
         pygame.display.update()
 
     pygame.quit()

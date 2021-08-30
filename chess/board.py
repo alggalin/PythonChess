@@ -15,5 +15,6 @@ class Board:
             for col in range(row % 2, ROWS, 2):
                 pygame.draw.rect(win, GRAY, (row * SQUARE_SIZE, col * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
 
+    # function to fill up the board with appropriate pieces in their specific locations
     def create_board(self):
         pass
