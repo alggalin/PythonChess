@@ -17,6 +17,7 @@ white_king = pygame.transform.scale(white_king, (white_king.get_width() // 3, wh
 
 imagerect = white_king.get_rect()
 
+
 def main():
     run = True
     clock = pygame.time.Clock()
@@ -33,7 +34,9 @@ def main():
         
         for event in pygame.event.get():
             
-            if event.type == pygame.QUIT:
+            keys = pygame.key.get_pressed()
+
+            if event.type == pygame.QUIT or keys[K_ESCAPE]:
                 run = False
         
             # move piece while mouse being pressed
