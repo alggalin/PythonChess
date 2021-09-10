@@ -4,11 +4,11 @@ PADDING = 10
 BORDER = 2
 
 class Piece:
-    def __init__(self, row, col, color):
+    def __init__(self, row, col, color, piece_type):
         self.row = row
         self.col = col
         self.color = color
-        
+        self.piece_type = piece_type
         self.x = 0
         self.y = 0
         self.calc_pos()
@@ -21,4 +21,8 @@ class Piece:
         pass
 
     def __repr__(self):
-        return str(self.color)
+        if self.color == WHITE:
+            return "YT " + str(self.piece_type)
+        else:
+            return "BLK " + str(self.piece_type)
+
