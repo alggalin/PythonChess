@@ -16,13 +16,16 @@ class Piece:
     def calc_pos(self):
         self.x = SQUARE_SIZE * self.col + SQUARE_SIZE // 2
         self.y = SQUARE_SIZE * self.row + SQUARE_SIZE // 2
-        
+    
+    def get_draw_pos(self):
+        return (self.x - 50, self.y - 50)
+
     def draw(self, win):
         pass
 
     def __repr__(self):
         if self.color == WHITE:
-            return "YT " + str(self.piece_type)
+            return str(self.piece_type)
         else:
-            return "BLK " + str(self.piece_type)
+            return str(self.piece_type)
 

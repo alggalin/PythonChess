@@ -12,12 +12,6 @@ WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Python Chess')
 
 
-white_king = pygame.image.load("images/WK.png")
-white_king = pygame.transform.scale(white_king, (white_king.get_width() // 3, white_king.get_height() // 3))
-
-imagerect = white_king.get_rect()
-
-
 def main():
     run = True
     clock = pygame.time.Clock()
@@ -44,10 +38,9 @@ def main():
                 mx, my = pygame.mouse.get_pos()
         
         
-        # draw the board at the end of each loop
+        # draw the board and pieces at the end of each loop
         board.draw_board(WIN)
-        # WIN.blit(white_king, imagerect)
-        WIN.blit(white_king, (mx - 50, my - 50))
+
         pygame.display.update()
 
     pygame.quit()
