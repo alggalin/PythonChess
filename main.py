@@ -1,7 +1,7 @@
 from chess.piece import Piece
 import pygame
-from chess.constants import WIDTH, HEIGHT
-from chess.board import Board
+from chess.constants import SQUARE_SIZE, WIDTH, HEIGHT
+from chess.game import Game
 from pygame.locals import *
 
 FPS = 60
@@ -11,15 +11,19 @@ pygame.init()
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Python Chess')
 
+def get_mouse_board_position(x, y):
+    col = x // SQUARE_SIZE
+    row = y // SQUARE_SIZE
+    return (row, col)
 
 def main():
     run = True
     clock = pygame.time.Clock()
 
-    # new board object
-    board = Board()
+    # new game object
+    game = Game(WIN)
 
-    # initial position of the piece
+    # initial position of mouse
     mx, my = 50, 50
 
     while(run):
@@ -32,14 +36,20 @@ def main():
 
             if event.type == pygame.QUIT or keys[K_ESCAPE]:
                 run = False
-        
-            # move piece while mouse being pressed
-            if pygame.mouse.get_pressed()[0] == True:
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 mx, my = pygame.mouse.get_pos()
-        
+                mx, my = get_mouse_board_position(mx, my)
+                game.select_piece(mx, my)
+
+            # # move piece while mouse being pressed
+            # if pygame.mouse.get_pressed()[0] == True:
+            #     mx, my = pygame.mouse.get_pos()
+
+            #     print(mx, my)
         
         # draw the board and pieces at the end of each loop
-        board.draw_board(WIN)
+        game.update(WIN)
 
         pygame.display.update()
 

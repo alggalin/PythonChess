@@ -10,6 +10,9 @@ class Board:
         self.black_left = self.white_left = 16
         self.create_board()
 
+    def get_piece(self, row, col):
+        return self.board[row][col]
+
     def draw_board(self, win):
         win.fill(BROWN)
 
@@ -28,10 +31,7 @@ class Board:
                 board_position = self.board[col][row]
 
                 if board_position != 0:  # there is a piece here that should be drawn
-                    # get the appropriate image piece to draw
-                    piece = pygame.image.load("images/" + str(board_position.piece_type) + ".png")
-                    piece = pygame.transform.scale(piece, (piece.get_width() // 3, piece.get_height() // 3))
-                    win.blit(piece, board_position.get_draw_pos())
+                    board_position.draw(win)
 
     # function to fill up the board with appropriate pieces in their specific locations
     def create_board(self):

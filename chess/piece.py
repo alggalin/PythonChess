@@ -1,3 +1,4 @@
+import pygame
 from .constants import BLACK, SQUARE_SIZE, WHITE
 
 PADDING = 10
@@ -13,6 +14,9 @@ class Piece:
         self.y = 0
         self.calc_pos()
     
+    def get_piece_type(self):
+        return self.piece_type
+
     def calc_pos(self):
         self.x = SQUARE_SIZE * self.col + SQUARE_SIZE // 2
         self.y = SQUARE_SIZE * self.row + SQUARE_SIZE // 2
@@ -21,11 +25,11 @@ class Piece:
         return (self.x - 50, self.y - 50)
 
     def draw(self, win):
-        pass
+        # get the appropriate image piece to draw
+        piece = pygame.image.load("images/" + str(self.piece_type) + ".png")
+        piece = pygame.transform.scale(piece, (piece.get_width() // 3, piece.get_height() // 3))
+        win.blit(piece, self.get_draw_pos())
 
     def __repr__(self):
-        if self.color == WHITE:
-            return str(self.piece_type)
-        else:
-            return str(self.piece_type)
+        return str(self.piece_type + " (" + str(self.col) + ", " + str(self.row) + ")")
 
