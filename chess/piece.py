@@ -1,8 +1,8 @@
 import pygame
 from .constants import BLACK, SQUARE_SIZE, WHITE
 
-PADDING = 10
-BORDER = 2
+# PADDING = 10
+# BORDER = 2
 
 class Piece:
     def __init__(self, row, col, color, piece_type):
@@ -26,10 +26,18 @@ class Piece:
 
     def draw(self, win):
         # get the appropriate image piece to draw
+        # self.calc_pos()
         piece = pygame.image.load("images/" + str(self.piece_type) + ".png")
         piece = pygame.transform.scale(piece, (piece.get_width() // 3, piece.get_height() // 3))
         win.blit(piece, self.get_draw_pos())
 
+    def move(self, row, col):
+        print("Current: ", self.row, self.col)
+        self.row = row
+        self.col = col
+        self.calc_pos()
+        print("New: ", self.row, self.col)
+        
     def __repr__(self):
         return str(self.piece_type + " (" + str(self.col) + ", " + str(self.row) + ")")
 

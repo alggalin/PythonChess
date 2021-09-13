@@ -13,6 +13,13 @@ class Board:
     def get_piece(self, row, col):
         return self.board[row][col]
 
+    def move(self, piece, row, col):
+        temp = self.board[row][col]
+        self.board[row][col] = self.board[piece.row][piece.col]
+        self.board[piece.row][piece.col] = temp
+        self.board[row][col].move(row, col)
+
+
     def draw_board(self, win):
         win.fill(BROWN)
 
