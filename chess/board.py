@@ -7,11 +7,18 @@ class Board:
     def __init__(self):
         self.board = []
         self.selected_piece = None
-        self.black_left = self.white_left = 16
         self.create_board()
 
+    def make_queen(self, piece):
+        if piece.color == WHITE:
+            piece.piece_type = "WQ"
+        else:
+            piece.piece_type = "BQ"
+
     def get_piece(self, row, col):
-        return self.board[row][col]
+        if 0 <= col <= 7 and 0 <= row <= 7:
+            return self.board[row][col]
+        return 0
 
     def remove(self, row, col):
         piece = self.board[row][col]
@@ -21,6 +28,11 @@ class Board:
         self.board[row][col] = 0
 
     def move(self, piece, row, col):
+        if piece.color == WHITE and row == 0:
+            self.make_queen(piece)
+        elif piece.color == BLACK and row == 7:
+            self.make_queen(piece)
+
         temp = self.board[row][col]
         self.board[row][col] = self.board[piece.row][piece.col]
         self.board[piece.row][piece.col] = temp
