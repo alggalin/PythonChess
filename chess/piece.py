@@ -32,11 +32,9 @@ class Piece:
         win.blit(piece, self.get_draw_pos())
 
     def move(self, row, col):
-        print("Current: ", self.row, self.col)
         self.row = row
         self.col = col
         self.calc_pos()
-        print("New: ", self.row, self.col)
         
     def __repr__(self):
         return str(self.piece_type + " (" + str(self.col) + ", " + str(self.row) + ")")

@@ -13,6 +13,13 @@ class Board:
     def get_piece(self, row, col):
         return self.board[row][col]
 
+    def remove(self, row, col):
+        piece = self.board[row][col]
+
+        if piece.piece_type == "BK" or piece.piece_type == "WK":
+            print("CheckMate!")
+        self.board[row][col] = 0
+
     def move(self, piece, row, col):
         temp = self.board[row][col]
         self.board[row][col] = self.board[piece.row][piece.col]

@@ -41,7 +41,9 @@ def main():
                 mx, my = pygame.mouse.get_pos()
                 mx, my = get_mouse_board_position(mx, my)
                 game.select_piece(mx, my)
-                game.move_piece(mx, my)
+                game.remove_piece(mx, my)
+                
+                #game.move_piece(mx, my)
 
             # move piece while mouse being pressed
             # if pygame.mouse.get_pressed()[0] == True:

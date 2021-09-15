@@ -16,14 +16,23 @@ class Game:
 
     def select_piece(self, row, col):
         piece = self.board.get_piece(row, col)
+
         if piece != 0 and piece.color == self.turn:
             self.selected = piece
+            print("Selected: ", piece)
 
     def move_piece(self, row, col):
         if self.selected is not None:
-            self.board.move(self.selected, row, col)
-            # self.change_turn()
+            piece = self.board.get_piece(row, col)
+
+            # if piece != 0 and piece.color == self.turn:
+            if piece == 0:
+                self.board.move(self.selected, row, col)
+                self.change_turn()
     
+    def remove_piece(self, row, col):
+        self.board.remove(row, col)
+        
     def change_turn(self):
         self.selected = None
         if self.turn == WHITE:
