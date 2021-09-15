@@ -40,6 +40,7 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mx, my = pygame.mouse.get_pos()
                 mx, my = get_mouse_board_position(mx, my)
+                #game.update(WIN, mx, my)
                 game.select_piece(mx, my)
                 game.move_piece(mx, my)
         
