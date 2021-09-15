@@ -18,7 +18,7 @@ class Board:
     def get_piece(self, row, col):
         if 0 <= col <= 7 and 0 <= row <= 7:
             return self.board[row][col]
-        return 0
+        return None
 
     def remove(self, row, col):
         piece = self.board[row][col]
@@ -28,9 +28,9 @@ class Board:
         self.board[row][col] = 0
 
     def move(self, piece, row, col):
-        if piece.color == WHITE and row == 0:
+        if piece.color == WHITE and row == 0 and piece.piece_type == "WP":
             self.make_queen(piece)
-        elif piece.color == BLACK and row == 7:
+        elif piece.color == BLACK and row == 7 and piece.piece_type == "BP":
             self.make_queen(piece)
 
         temp = self.board[row][col]
@@ -47,7 +47,6 @@ class Board:
             for col in range(row % 2, ROWS, 2):
                 pygame.draw.rect(win, TAN, (row * SQUARE_SIZE, col * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
         
-        self.draw_pieces(win)
 
     def draw_pieces(self, win):
         # need to go through the list and place each piece according to it's actual location
