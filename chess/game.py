@@ -37,6 +37,8 @@ class Game:
             self.pawn_moves(piece)
         elif piece.piece_type == "BN" or piece.piece_type == "WN":
             self.knight_moves(piece)
+        elif piece.piece_type == "BR" or piece.piece_type == "WR":
+            self.rook_moves(piece)
 
     def move_piece(self, row, col):
         if self.selected is not None:
@@ -78,11 +80,11 @@ class Game:
 
             # check diagonal pieces to see if they can be ate
             diag = self.board.get_piece(row - 1, col -1)
-            if diag != 0 and diag.color != self.turn:
+            if diag is not None and diag != 0 and diag.color == BLACK:
                 self.valid_moves.add((row - 1, col - 1))
             
             diag = self.board.get_piece(row - 1, col + 1)
-            if diag != 0 and diag.color != self.turn:
+            if diag is not None and diag != 0 and diag.color == BLACK:
                 self.valid_moves.add((row - 1, col + 1))
 
         elif piece.color == BLACK:
@@ -98,11 +100,11 @@ class Game:
 
             # check diagonal pieces to see if they can be ate
             diag = self.board.get_piece(row + 1, col -1)
-            if diag != 0 and diag.color != self.turn:
+            if diag is not None and diag != 0 and diag.color == WHITE:
                 self.valid_moves.add((row + 1, col - 1))
             
             diag = self.board.get_piece(row + 1, col + 1)
-            if diag != 0 and diag.color != self.turn:
+            if diag is not None and diag != 0 and diag.color == WHITE:
                 self.valid_moves.add((row + 1, col + 1))
     
     def knight_moves(self, piece):
@@ -116,3 +118,36 @@ class Game:
 
             if position == 0 or (position is not None and position.color != self.turn):
                 self.valid_moves.add((row + board_row, col + board_col))
+
+    def rook_moves(self, piece):
+        row = piece.row
+        col = piece.col
+
+        movement = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+
+        for row_move, col_move in movement:
+
+            position = self.board.get_piece(row + row_move, col + col_move)
+            while position is not None:
+
+                if position != 0 and position.color == self.turn:
+                    break
+
+                self.valid_moves.add((row + row_move, col + col_move))
+
+                if position != 0 and position.color != self.turn:
+                    break
+
+                if row_move > 0:
+                    row_move += 1
+                elif row_move < 0:
+                    row_move -= 1
+                
+                if col_move > 0:
+                    col_move += 1
+                elif col_move < 0:
+                    col_move -= 1
+
+                position = self.board.get_piece(row + row_move, col + col_move)
+                if position is None:
+                    break
