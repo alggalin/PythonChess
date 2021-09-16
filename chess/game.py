@@ -39,6 +39,14 @@ class Game:
             self.knight_moves(piece)
         elif piece.piece_type == "BR" or piece.piece_type == "WR":
             self.rook_moves(piece)
+        elif piece.piece_type == "BB" or piece.piece_type == "WB":
+            self.bishop_moves(piece)
+        elif piece.piece_type == "BQ" or piece.piece_type == "WQ":
+            self.rook_moves(piece)
+            self.bishop_moves(piece)
+        elif piece.piece_type == "BK" or piece.piece_type == "WK":
+            self.king_moves(piece)
+
 
     def move_piece(self, row, col):
         if self.selected is not None:
@@ -120,15 +128,35 @@ class Game:
                 self.valid_moves.add((row + board_row, col + board_col))
 
     def rook_moves(self, piece):
-        row = piece.row
-        col = piece.col
 
         movement = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+
+        self.cross_and_diag_moves(piece, movement)
+    
+    def bishop_moves(self, piece):
+
+        movement = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
+
+        self.cross_and_diag_moves(piece, movement)
+    
+    def king_moves(self, piece):
+        
+        movement = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+
+        self.cross_and_diag_moves(piece, movement, 1)
+        
+    def cross_and_diag_moves(self, piece, movement, distance=7):
+        row = piece.row
+        col = piece.col
 
         for row_move, col_move in movement:
 
             position = self.board.get_piece(row + row_move, col + col_move)
-            while position is not None:
+            #while position is not None:
+            for i in range(distance):
+                
+                if position is None:
+                    break
 
                 if position != 0 and position.color == self.turn:
                     break
