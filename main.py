@@ -1,5 +1,6 @@
 from chess.piece import Piece
 import pygame
+from pygame import mixer
 from chess.constants import SQUARE_SIZE, WIDTH, HEIGHT
 from chess.game import Game
 from pygame.locals import *
@@ -7,6 +8,7 @@ from pygame.locals import *
 FPS = 60
 
 pygame.init()
+pygame.mixer.init()
 
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Python Chess')
@@ -40,7 +42,6 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mx, my = pygame.mouse.get_pos()
                 mx, my = get_mouse_board_position(mx, my)
-                #game.update(WIN, mx, my)
                 game.select_piece(mx, my)
                 game.move_piece(mx, my)
         

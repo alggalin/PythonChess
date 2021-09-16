@@ -1,7 +1,11 @@
 from chess import piece
 import pygame
+from pygame import mixer
 from .constants import BLACK, RED, SQUARE_SIZE, WHITE, DARK_RED
 from .board import Board
+
+pygame.mixer.init()
+mixer.music.load("audio/move_made.mp3")
 
 class Game:
 
@@ -60,6 +64,8 @@ class Game:
                 self.board.move(self.selected, row, col)
                 self.change_turn()
                 self.valid_moves = set()
+
+                mixer.music.play()
     
     def remove_piece(self, row, col):
         self.board.remove(row, col)
