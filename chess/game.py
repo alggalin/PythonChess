@@ -14,6 +14,8 @@ class Game:
         self.turn = WHITE
         self.board = Board()
         self.valid_moves = set()
+        self.bK = self.board.get_piece(0, 4)
+        self.wK = self.board.get_piece(7, 4)
     
     def update(self, win):
         self.board.draw_board(win)
@@ -38,10 +40,17 @@ class Game:
 
         for row in range(ROWS):
             for col in range(COLS):
-                piece = self.board[row][col]
+                piece = self.board.get_piece(row, col)
 
                 if piece != 0 and piece.color != king.color:
-                    self.get_valid_moves()
+                    moves = self.get_valid_moves(piece)
+
+                    if king_position in moves:
+                        print("KING is in CHECK")
+                        return True
+        
+        return False
+
 
 
 
@@ -87,6 +96,10 @@ class Game:
                 self.change_turn()
                 self.valid_moves = set()
 
+                if self.turn == self.bK.color:
+                    self.king_in_check(self.bK)
+                else:
+                    self.king_in_check(self.wK)
                 mixer.music.play()
     
     def remove_piece(self, row, col):
