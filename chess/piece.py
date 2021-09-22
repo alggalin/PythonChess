@@ -37,5 +37,5 @@ class Piece:
         self.calc_pos()
         
     def __repr__(self):
-        return str(self.piece_type + " (" + str(self.col) + ", " + str(self.row) + ")")
+        return str(self.piece_type + "(row, col): (" + str(self.row) + ", " + str(self.col) + ")")
 

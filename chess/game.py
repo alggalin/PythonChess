@@ -35,8 +35,7 @@ class Game:
     def king_in_check(self, king):
 
         king_position = (king.row, king.col)
-        self.get_valid_moves(king)
-        king_moves = self.valid_moves
+        king_moves = self.get_valid_moves(king)
 
         for row in range(ROWS):
             for col in range(COLS):
@@ -93,13 +92,16 @@ class Game:
                     self.remove_piece(piece.row, piece.col)
 
                 self.board.move(self.selected, row, col)
-                self.change_turn()
-                self.valid_moves = set()
 
-                if self.turn == self.bK.color:
+                if self.turn == WHITE:
                     self.king_in_check(self.bK)
                 else:
                     self.king_in_check(self.wK)
+
+                self.change_turn()
+                self.valid_moves = set()
+
+                
                 mixer.music.play()
     
     def remove_piece(self, row, col):
