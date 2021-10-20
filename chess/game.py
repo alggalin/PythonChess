@@ -1,7 +1,7 @@
 from chess import piece
 import pygame
 from pygame import mixer
-from .constants import BLACK, RED, SQUARE_SIZE, WHITE, DARK_RED
+from .constants import BLACK, COLS, RED, ROWS, SQUARE_SIZE, WHITE, DARK_RED
 from .board import Board
 
 pygame.mixer.init()
@@ -14,6 +14,8 @@ class Game:
         self.turn = WHITE
         self.board = Board()
         self.valid_moves = set()
+        self.bK = self.board.get_piece(0, 4)
+        self.wK = self.board.get_piece(7, 4)
     
     def update(self, win):
         self.board.draw_board(win)
@@ -25,31 +27,59 @@ class Game:
 
         if piece != 0 and piece.color == self.turn:
             self.selected = piece
-            self.get_valid_moves(piece)
+            self.set_valid_moves(piece)
+
+    # in order to see whether the king is in check or not,
+    # going to check the valid moves of all opposing pieces and see whether or not
+    # any of their valid moves is the position of the king piece
+    def king_in_check(self, king):
+
+        king_position = (king.row, king.col)
+        king_moves = self.get_valid_moves(king)
+
+        for row in range(ROWS):
+            for col in range(COLS):
+                piece = self.board.get_piece(row, col)
+
+                if piece != 0 and piece.color != king.color:
+                    moves = self.get_valid_moves(piece)
+
+                    if king_position in moves:
+                        print("KING is in CHECK")
+                        return True
+        
+        return False
+
+
 
 
     def draw_valid_moves(self, win):
-        for move in self.valid_moves:
-            row, col = move
-            pygame.draw.rect(win, BLACK, (col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
-            pygame.draw.rect(win, DARK_RED, (col * SQUARE_SIZE + 1, row * SQUARE_SIZE + 1, SQUARE_SIZE - 2, SQUARE_SIZE - 2))
+        if self.valid_moves is not None:
+            for move in self.valid_moves:
+                if move is not None:
+                    row, col = move
+                    pygame.draw.rect(win, BLACK, (col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
+                    pygame.draw.rect(win, DARK_RED, (col * SQUARE_SIZE + 1, row * SQUARE_SIZE + 1, SQUARE_SIZE - 2, SQUARE_SIZE - 2))
 
-    def get_valid_moves(self, piece):
-        self.valid_moves.clear()
-        
+    def set_valid_moves(self, piece):
+        if self.valid_moves is not None:
+            self.valid_moves.clear()
+        self.valid_moves = self.get_valid_moves(piece)
+
+    def get_valid_moves(self, piece):        
         if piece.piece_type == "BP" or piece.piece_type == "WP":
-            self.pawn_moves(piece)
+            return self.pawn_moves(piece)
         elif piece.piece_type == "BN" or piece.piece_type == "WN":
-            self.knight_moves(piece)
+            return self.knight_moves(piece)
         elif piece.piece_type == "BR" or piece.piece_type == "WR":
-            self.rook_moves(piece)
+            return self.rook_moves(piece)
         elif piece.piece_type == "BB" or piece.piece_type == "WB":
-            self.bishop_moves(piece)
+            return self.bishop_moves(piece)
         elif piece.piece_type == "BQ" or piece.piece_type == "WQ":
-            self.rook_moves(piece)
-            self.bishop_moves(piece)
+            queen_moves = self.rook_moves(piece) | self.bishop_moves(piece)
+            return queen_moves
         elif piece.piece_type == "BK" or piece.piece_type == "WK":
-            self.king_moves(piece)
+            return self.king_moves(piece)
 
 
     def move_piece(self, row, col):
@@ -57,14 +87,21 @@ class Game:
             piece = self.board.get_piece(row, col)
 
             position = (row, col)
-            if position in self.valid_moves:
+            if self.valid_moves is not None and position in self.valid_moves:
                 if piece != 0 and piece.color != self.turn:
                     self.remove_piece(piece.row, piece.col)
 
                 self.board.move(self.selected, row, col)
+
+                if self.turn == WHITE:
+                    self.king_in_check(self.bK)
+                else:
+                    self.king_in_check(self.wK)
+
                 self.change_turn()
                 self.valid_moves = set()
 
+                
                 mixer.music.play()
     
     def remove_piece(self, row, col):
@@ -81,84 +118,96 @@ class Game:
         row = piece.row
         col = piece.col
 
+        valid_moves = set()
+
         if piece.color == WHITE:
             if row == 6:
                 if self.board.get_piece(row - 1, col) == 0:
-                    self.valid_moves.add((row - 1, col))
+                    valid_moves.add((row - 1, col))
                     if self.board.get_piece(row - 2, col) == 0:
-                        self.valid_moves.add((row - 2, col))
+                        valid_moves.add((row - 2, col))
                 
             else:
                 if self.board.get_piece(row - 1, col) == 0:
-                    self.valid_moves.add((row - 1, col))
+                    valid_moves.add((row - 1, col))
 
             # check diagonal pieces to see if they can be ate
             diag = self.board.get_piece(row - 1, col -1)
             if diag is not None and diag != 0 and diag.color == BLACK:
-                self.valid_moves.add((row - 1, col - 1))
+                valid_moves.add((row - 1, col - 1))
             
             diag = self.board.get_piece(row - 1, col + 1)
             if diag is not None and diag != 0 and diag.color == BLACK:
-                self.valid_moves.add((row - 1, col + 1))
+                valid_moves.add((row - 1, col + 1))
+
+            return valid_moves
 
         elif piece.color == BLACK:
             if row == 1:
                 if self.board.get_piece(row + 1, col) == 0:
-                    self.valid_moves.add((row + 1, col))
+                    valid_moves.add((row + 1, col))
                     if self.board.get_piece(row + 2, col) == 0:
-                        self.valid_moves.add((row + 2, col))
+                        valid_moves.add((row + 2, col))
                 
             else:
                 if self.board.get_piece(row + 1, col) == 0:
-                    self.valid_moves.add((row + 1, col))
+                    valid_moves.add((row + 1, col))
 
             # check diagonal pieces to see if they can be ate
             diag = self.board.get_piece(row + 1, col -1)
             if diag is not None and diag != 0 and diag.color == WHITE:
-                self.valid_moves.add((row + 1, col - 1))
+                valid_moves.add((row + 1, col - 1))
             
             diag = self.board.get_piece(row + 1, col + 1)
             if diag is not None and diag != 0 and diag.color == WHITE:
-                self.valid_moves.add((row + 1, col + 1))
+                valid_moves.add((row + 1, col + 1))
     
+            return valid_moves
+
     def knight_moves(self, piece):
         row = piece.row
         col = piece.col
 
         moves = [(2, -1), (2, 1), (-2, -1), (-2, 1), (1, 2), (-1, 2), (1, -2), (-1, -2)]
 
+        valid_moves = set()
+
         for board_row, board_col in moves:
             position = self.board.get_piece(row + board_row, col + board_col)
 
             if position == 0 or (position is not None and position.color != self.turn):
-                self.valid_moves.add((row + board_row, col + board_col))
+                valid_moves.add((row + board_row, col + board_col))
+
+        return valid_moves
 
     def rook_moves(self, piece):
 
         movement = [(0, 1), (0, -1), (1, 0), (-1, 0)]
 
-        self.cross_and_diag_moves(piece, movement)
+        return self.cross_and_diag_moves(piece, movement)
     
     def bishop_moves(self, piece):
 
         movement = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
 
-        self.cross_and_diag_moves(piece, movement)
+        return self.cross_and_diag_moves(piece, movement)
     
     def king_moves(self, piece):
         
         movement = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
 
-        self.cross_and_diag_moves(piece, movement, 1)
+        return self.cross_and_diag_moves(piece, movement, 1)
         
     def cross_and_diag_moves(self, piece, movement, distance=7):
         row = piece.row
         col = piece.col
 
+        valid_moves = set()
+
         for row_move, col_move in movement:
 
             position = self.board.get_piece(row + row_move, col + col_move)
-            #while position is not None:
+
             for i in range(distance):
                 
                 if position is None:
@@ -167,7 +216,7 @@ class Game:
                 if position != 0 and position.color == self.turn:
                     break
 
-                self.valid_moves.add((row + row_move, col + col_move))
+                valid_moves.add((row + row_move, col + col_move))
 
                 if position != 0 and position.color != self.turn:
                     break
@@ -185,3 +234,4 @@ class Game:
                 position = self.board.get_piece(row + row_move, col + col_move)
                 if position is None:
                     break
+        return valid_moves
