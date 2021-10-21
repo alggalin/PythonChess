@@ -35,13 +35,12 @@ class Game:
     def king_in_check(self, king):
 
         king_position = (king.row, king.col)
-        king_moves = self.get_valid_moves(king)
 
         for row in range(ROWS):
             for col in range(COLS):
                 piece = self.board.get_piece(row, col)
 
-                if piece != 0 and piece.color != king.color:
+                if piece != 0 and piece.color == self.turn: # king.color:
                     moves = self.get_valid_moves(piece)
 
                     if king_position in moves:
@@ -49,9 +48,6 @@ class Game:
                         return True
         
         return False
-
-
-
 
     def draw_valid_moves(self, win):
         if self.valid_moves is not None:
@@ -196,7 +192,24 @@ class Game:
         
         movement = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
 
-        return self.cross_and_diag_moves(piece, movement, 1)
+        king_moves = self.cross_and_diag_moves(piece, movement, 1)
+
+        # want to go through and remove any position where the king would be in check
+        # check the game state if the movement is made, if results in check then they can't?
+        for row in range(ROWS):
+            for col in range(COLS):
+                piece = self.board.get_piece(row, col)
+
+                if piece != 0 and piece.color != self.turn and piece.piece_type != "WK" and piece.piece_type != "BK": # king.color:
+                    piece_moves = self.get_valid_moves(piece)
+
+                    king_copy = king_moves.copy()
+                    
+                    for move in king_copy:
+                        if move in piece_moves and move in king_moves:
+                            king_moves.remove(move)
+
+        return king_moves
         
     def cross_and_diag_moves(self, piece, movement, distance=7):
         row = piece.row
